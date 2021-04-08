@@ -1,7 +1,7 @@
 <template>
 	<div class="taL">
-		<h2>{{$route.name.substr(1)}}Auto traffic light</h2>
-		<section>
+		<h2>traffic light</h2>
+		<section v-if="SN.A && EW.A">
 			<p>
 				<span class="dpIB w4">南北↕:</span>
 				<label for="SN_duration_A">直行绿灯时间 <b class="cG">↑</b></label><input type="tel" maxlength="2" id="SN_duration_A" v-model.number="SN.duration_A" />（秒）
@@ -24,7 +24,7 @@
 				<button class="bgRed" @click="stop()">STOP</button>
 			</p>
 		</section>
-		<div class="space">
+		<div v-if="SN.A && EW.A" class="space">
 			<div class="WN">
 
 			</div>
@@ -161,8 +161,8 @@
 					duration_flash: 3,
 					delay_r: 2 // 红灯延时(秒)
 				},
-				SN:null,
-				EW:null,
+				SN:{},
+				EW:{},
 				status: 'stop',
 				runTime: null,
 			}
@@ -256,7 +256,7 @@
 						return lightDuration(delay_r).then(()=>{
 							if ($this.status=='run') {
 								switchDirection();
-								rUN(nextDirection, curDirection);coSNole.log('换向') //换向
+								rUN(nextDirection, curDirection);console.log('换向') //换向
 							}
 						})
 					}else{
@@ -266,24 +266,24 @@
 
 				function rUN(directionObj_on, directionObj_off){
 					return Promise.resolve()
-						.then(()=>{coSNole.log('1st-前绿')	//1st-前绿
+						.then(()=>{console.log('1st-前绿')	//1st-前绿
 							return lightDuration(directionObj_on.duration_A - directionObj_on.duration_y);
-						}).then(()=>{coSNole.log('1st-前闪')	//1st-前闪
+						}).then(()=>{console.log('1st-前闪')	//1st-前闪
 							flashOn(directionObj_on.A);
 							return lightDuration(directionObj_on.duration_flash);
-						}).then(()=>{coSNole.log('1st-前闪-off')	//1st-前闪-off
+						}).then(()=>{console.log('1st-前闪-off')	//1st-前闪-off
 							flashOff(directionObj_on.A, directionObj_on);
 							return lightDuration(directionObj_on.duration_y);
-						}).then(()=>{coSNole.log('1st-前黄-off') //1st-前黄-off
+						}).then(()=>{console.log('1st-前黄-off') //1st-前黄-off
 							yOff(directionObj_on.A, directionObj_on.L, directionObj_on, directionObj_on, directionObj_on.duration_L);
 							return lightDuration(directionObj_on.duration_L - directionObj_on.duration_y);
-						}).then(()=>{coSNole.log('1st-左闪')	//1st-左闪
+						}).then(()=>{console.log('1st-左闪')	//1st-左闪
 							flashOn(directionObj_on.L);
 							return lightDuration(directionObj_on.duration_flash);
-						}).then(()=>{coSNole.log('1st-左闪-off')	//1st-左闪-off
+						}).then(()=>{console.log('1st-左闪-off')	//1st-左闪-off
 							flashOff(directionObj_on.L, directionObj_on);
 							return lightDuration(directionObj_on.duration_y)
-						}).then(()=>{coSNole.log('1st-左黄-off')	//1st-左黄-off (换向在 yOff 中延时 directionObj_on.delay_r 完成)
+						}).then(()=>{console.log('1st-左黄-off')	//1st-左黄-off (换向在 yOff 中延时 directionObj_on.delay_r 完成)
 							yOff(directionObj_on.L, directionObj_off.A, directionObj_on, directionObj_off, directionObj_off.duration_A, directionObj_on.delay_r)
 						})
 				}
@@ -291,8 +291,8 @@
 				rUN(init_directionObj_on, init_directionObj_off)
 			},
 			initDuration(){
-				this.SN = $.extend(true,{}, this.SN_init);
-				this.EW = $.extend(true,{}, this.EW_init);
+				Object.assign(this.SN, this.SN_init);
+				Object.assign(this.EW, this.EW_init);
 			},
 			pause(){
 				this.status = 'pause';
@@ -315,8 +315,9 @@
 			}
 		},
 		mounted() {
-			this.SN = $.extend(true,{}, this.SN_init);
-			this.EW = $.extend(true,{}, this.EW_init);
+			console.log(this.SN_init)
+			Object.assign(this.SN, this.SN_init);
+			Object.assign(this.EW, this.EW_init);
 		}
 	}
 </script>
