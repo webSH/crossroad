@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
+// import Home from "../views/Home.vue";
 
 const routes = [
   {
     path: "/",
     name: "Home",
-    component: Home,
+    // component: Home,
+	component: () =>
+      import("../views/CrossRoad.vue"),
   },
   {
     path: "/about",
@@ -16,6 +18,12 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About.vue"),
   },
+  {
+	  path: "/:catchAll(.*)",
+	  redirect: to => {
+		  return '/'
+	  }
+  }
 ];
 
 const router = createRouter({
