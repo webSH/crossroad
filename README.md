@@ -1,4 +1,5 @@
 # trafficlight
+十字路口，js 模拟的一个交通信号机。
 
 ## Project setup
 ```
