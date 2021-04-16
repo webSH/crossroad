@@ -10,14 +10,24 @@ body{font-size: 16px;}
 .cMain{color:#fff}
 .cMain2{color:#42b983}
 .cGray{color:$gray}
-/* font-size */
-@for $i from 10 through 20 {
-	.fs#{$i}{font-size:#{$i}px;}
-}
+
+// @mixin mix_directionSelecter($direction,$i) {
+// 	.m#{str-slice($direction,1,1)}#{$i}, .m#{str-slice($direction,1,1)}#{$i}_sub {margin-#{$direction}:1em * $i;}
+// 	.p#{str-slice($direction,1,1)}#{$i}, .p#{str-slice($direction,1,1)}#{$i}_sub {padding-#{$direction}:1em * $i;}
+// }
 
 @for $i from 1 through 20 {
+	@if $i>9 {
+		.fs#{$i}{font-size:#{$i}px;} /* font-size */
+	} 
 	.tIdt#{$i}{text-indent:#{$i}em;}
 	.w#{$i}{width:#{$i}em;}
+	@each $direction in top,right,bottom,left{
+		.m#{str-slice($direction,1,1)}#{$i}, .m#{str-slice($direction,1,1)}#{$i}_sub>* {margin-#{$direction}:1em * $i;}
+		.p#{str-slice($direction,1,1)}#{$i}, .p#{str-slice($direction,1,1)}#{$i}_sub>* {padding-#{$direction}:1em * $i;}
+		
+	}
+	
 }
 
 .bgGreen{background:$green;color:#fff}
@@ -69,3 +79,4 @@ pre,.pre{white-space: pre-wrap;
 	border-radius: 3px;
 	.comment{@extend .cGray}
 }
+.disable{opacity: .5;pointer-events: none;}
