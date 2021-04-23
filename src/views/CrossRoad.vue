@@ -253,7 +253,7 @@
 					flashObj['g'].on = false;	//绿-off
 					flashObj['y'].on = true;	//黄
 				}
-				function yOff(curLightGroup, nextLightGroup, curDirection, nextDirection, nextDuration, delay_r){ //黄-off(下组绿)
+				async function yOff(curLightGroup, nextLightGroup, curDirection, nextDirection, nextDuration, delay_r){ //黄-off(下组绿)
 				/*	curLightGroup: 当前（绿灯）组,
 					nextLightGroup: 下一（红灯）组,
 					nextDirection: 切换后方向组,
@@ -268,40 +268,65 @@
 					}
 					if (delay_r){	//有红灯延时(换向)
 						Countdown(curDirection, curDirection.delay_r + nextDirection.duration_A + nextDirection.duration_L + nextDirection.duration_y*2 + nextDirection.delay_r); //1st-(红)倒计时
-						return lightDuration(delay_r).then(()=>{
-							if ($this.status=='run') {
-								console.log('===换向')
-								switchGroup();
-								rUN(nextDirection, curDirection); //换向
-							}
-						})
+						// return lightDuration(delay_r).then(()=>{
+						// 	if ($this.status=='run') {
+						// 		console.log('===换向')
+						// 		switchGroup();
+						// 		rUN(nextDirection, curDirection); //换向
+						// 	}
+						// })
+						await lightDuration(delay_r);
+						if ($this.status=='run'){
+							console.log('===换向')
+							switchGroup();
+							rUN(nextDirection, curDirection);
+						}
 					}else{ //同向换组
 						switchGroup();
 					}
 				}
 				
-				function rUN(directionObj_on, directionObj_off){
-					return Promise.resolve()
-						.then(()=>{console.log('1st-前绿')	//1st-前绿
-							return lightDuration(directionObj_on.duration_A - directionObj_on.duration_flash);
-						}).then(()=>{console.log('1st-前闪')	//1st-前闪
-							flashOn(directionObj_on.A);
-							return lightDuration(directionObj_on.duration_flash);
-						}).then(()=>{console.log('1st-前闪-off')	//1st-前闪-off
-							flashOff(directionObj_on.A, directionObj_on);
-							return lightDuration(directionObj_on.duration_y);
-						}).then(()=>{console.log('1st-前黄-off') //1st-前黄-off
-							yOff(directionObj_on.A, directionObj_on.L, directionObj_on, directionObj_on, directionObj_on.duration_L);
-							return lightDuration(directionObj_on.duration_L - directionObj_on.duration_flash);
-						}).then(()=>{console.log('1st-左闪')	//1st-左闪
-							flashOn(directionObj_on.L);
-							return lightDuration(directionObj_on.duration_flash);
-						}).then(()=>{console.log('1st-左闪-off')	//1st-左闪-off
-							flashOff(directionObj_on.L, directionObj_on);
-							return lightDuration(directionObj_on.duration_y)
-						}).then(()=>{console.log('1st-左黄-off')	//1st-左黄-off (换向在 yOff 中延时 directionObj_on.delay_r 完成)
-							yOff(directionObj_on.L, directionObj_off.A, directionObj_on, directionObj_off, directionObj_off.duration_A, directionObj_on.delay_r)
-						})
+				async function rUN(directionObj_on, directionObj_off){
+					// return Promise.resolve()
+					// 	.then(()=>{console.log('1st-前绿')	//1st-前绿
+					// 		return lightDuration(directionObj_on.duration_A - directionObj_on.duration_flash);
+					// 	}).then(()=>{console.log('1st-前闪')	//1st-前闪
+					// 		flashOn(directionObj_on.A);
+					// 		return lightDuration(directionObj_on.duration_flash);
+					// 	}).then(()=>{console.log('1st-前闪-off')	//1st-前闪-off
+					// 		flashOff(directionObj_on.A, directionObj_on);
+					// 		return lightDuration(directionObj_on.duration_y);
+					// 	}).then(()=>{console.log('1st-前黄-off') //1st-前黄-off
+					// 		yOff(directionObj_on.A, directionObj_on.L, directionObj_on, directionObj_on, directionObj_on.duration_L);
+					// 		return lightDuration(directionObj_on.duration_L - directionObj_on.duration_flash);
+					// 	}).then(()=>{console.log('1st-左闪')	//1st-左闪
+					// 		flashOn(directionObj_on.L);
+					// 		return lightDuration(directionObj_on.duration_flash);
+					// 	}).then(()=>{console.log('1st-左闪-off')	//1st-左闪-off
+					// 		flashOff(directionObj_on.L, directionObj_on);
+					// 		return lightDuration(directionObj_on.duration_y)
+					// 	}).then(()=>{console.log('1st-左黄-off')	//1st-左黄-off (换向在 yOff 中延时 directionObj_on.delay_r 完成)
+					// 		yOff(directionObj_on.L, directionObj_off.A, directionObj_on, directionObj_off, directionObj_off.duration_A, directionObj_on.delay_r);
+					// 	})
+				console.log('1st-前绿')
+					await lightDuration(directionObj_on.duration_A - directionObj_on.duration_flash);
+				console.log('1st-前闪')
+					flashOn(directionObj_on.A);
+					await lightDuration(directionObj_on.duration_flash);
+				console.log('1st-前闪-off')
+					flashOff(directionObj_on.A, directionObj_on);
+					await lightDuration(directionObj_on.duration_y);
+				console.log('1st-前黄-off')
+					yOff(directionObj_on.A, directionObj_on.L, directionObj_on, directionObj_on, directionObj_on.duration_L);
+					await lightDuration(directionObj_on.duration_L - directionObj_on.duration_flash);
+				console.log('1st-左闪')
+					flashOn(directionObj_on.L);
+					await lightDuration(directionObj_on.duration_flash);
+				console.log('1st-左闪-off')
+					flashOff(directionObj_on.L, directionObj_on);
+					await lightDuration(directionObj_on.duration_y);
+				console.log('1st-左黄-off')
+					yOff(directionObj_on.L, directionObj_off.A, directionObj_on, directionObj_off, directionObj_off.duration_A, directionObj_on.delay_r);
 				}
 				lightStatusInit(init_directionObj_on, init_directionObj_off); //初始化红绿
 				rUN(init_directionObj_on, init_directionObj_off) //开始
